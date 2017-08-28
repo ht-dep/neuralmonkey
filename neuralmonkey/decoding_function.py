@@ -179,8 +179,10 @@ class Attention(BaseAttention):
             if self.input_weights is None:
                 weights = tf.nn.softmax(s)
             else:
+                condition = tf.equal(self.input_weights, 1)
+                batch_size = tf.shape(s)[0]
                 masked_logits = tf.where(
-                    tf.equal(self.input_weights, 1),
+                    tf.tile(condition, [batch_size, 1]),
                     s, -np.inf * tf.ones_like(s))
                 weights = tf.nn.softmax(masked_logits)
             # pylint: enable=invalid-name
